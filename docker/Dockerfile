@@ -4,7 +4,7 @@ WORKDIR /app
 
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/lib/apt --mount=type=cache,target=/var/cache/apt \
-    apt-get update && \
+    until apt-get update; do echo "Retrying apt-get update..."; sleep 2; done && \
     apt-get install -y --no-install-recommends git && \
     rm -rf /var/lib/apt/lists/*
 
@@ -21,6 +21,7 @@ ENV INSTALL_OPTIONAL_DEP=${INSTALL_OPTIONAL_DEP}
 # Install dependencies (use cache, and delete after install, to speed up the build)
 RUN pip install --upgrade --no-cache-dir pip setuptools_scm && \
     pip install --no-cache-dir .[$INSTALL_OPTIONAL_DEP]
+
 
 # Set the entrypoint
 ENTRYPOINT ["vllm-router"]
