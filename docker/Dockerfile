@@ -4,7 +4,7 @@ WORKDIR /app
 
 # hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/lib/apt --mount=type=cache,target=/var/cache/apt \
-    until apt-get update; do echo "Retrying apt-get update..."; sleep 2; done && \
+    apt-get update && \
     apt-get install -y --no-install-recommends git && \
     rm -rf /var/lib/apt/lists/*
 
@@ -15,7 +15,7 @@ COPY .git/ .git/
 # Copy the rest of the application code
 COPY src/ src/
 
-ARG INSTALL_OPTIONAL_DEP=semantic_cache,lmcache
+ARG INSTALL_OPTIONAL_DEP=semantic_cache
 ENV INSTALL_OPTIONAL_DEP=${INSTALL_OPTIONAL_DEP}
 
 # Install dependencies (use cache, and delete after install, to speed up the build)
